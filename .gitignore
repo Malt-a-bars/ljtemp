@@ -2,6 +2,7 @@
 
 # Sublime text
 *.sublime-workspace
+*.sublime-project
 
 # C extensions
 *.so
