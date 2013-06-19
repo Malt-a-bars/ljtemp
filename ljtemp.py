@@ -39,6 +39,7 @@ class LJTemp():
     def __init__(self):
         self.probes = []
         self.connected = False
+        self.__rtd_table = {}
 
     def connect(self):
         """ Connect to labjack device. """
@@ -116,6 +117,24 @@ class LJTemp():
             raise ZeroDivisionError('Cannot measure resistance if current is null.')
         return volts / amps
 
+    def _rtd_table(self, probe_model):
+        """ Return array of (resistance, temperature) tuples for the given RTD probe model.
+        Load data from file if needed and cache it."""
+
+        if probe_model not in self.__rtd_table:
+            # load table from csv file, which must be sorted by resistance!
+            with open('maltabar.csv', 'rU') as csvfile:
+                reader = csv.DictReader(csvfile)
+                self.__rtd_table[probe_model] = []
+                for row in reader:
+                    # only add entries that have a not empty resistance
+                    if row[probe_model]:
+                        resistance = float(row[probe_model])
+                        temperature = float(re.sub('_', '-', row['Celsius']))
+                        datapoint = (resistance, temperature)
+                        self.__rtd_table[probe_model].append(datapoint)
+        return self.__rtd_table[probe_model]
+
     def _rtd_temperature(self, ohms, probe_type):
         """ Return the temperature in Celsius for a RTD sensor given its resistance
 
@@ -127,28 +146,18 @@ class LJTemp():
         """
         # open table with resistance / temp mappings
         probe_models = {'pt100': '404',
-                  'pt1000': '501',
-                  'ptc': '201',
-                  'ntc-101': '101',
-                  'ntc-102': '102',
-                  'ntc-103': '103',
-                  'ntc-104': '104',
-                  'ntc-105': '105'}
+                        'pt1000': '501',
+                        'ptc': '201',
+                        'ntc-101': '101',
+                        'ntc-102': '102',
+                        'ntc-103': '103',
+                        'ntc-104': '104',
+                        'ntc-105': '105'}
         if probe_type not in probe_models:
             raise Exception('unsupported probe type')
         model = probe_models[probe_type]
 
-        # load table from csv file. Must be sorted!
-        data = []
-        with open('maltabar.csv', 'rU') as csvfile:
-            reader = csv.DictReader(csvfile)
-            for row in reader:
-                # only add entries that have a not empty resistance
-                if row[model]:
-                    resistance = float(row[model])
-                    temperature = float(re.sub('_', '-', row['Celsius']))
-                    datapoint = (resistance, temperature)
-                    data.append(datapoint)
+        data = self._rtd_table(model)
 
         # find closest match in table of resistances
         ohms = float(ohms)
