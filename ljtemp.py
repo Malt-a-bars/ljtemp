@@ -28,7 +28,7 @@ class Probe():
         - `minus_input` (str): labjack input to substract voltage from. Can be 'GND'
         """
         self.name = name
-        self.type = kind
+        self.kind = kind
         self.model = model
         self.plus_input = plus_input
         self.minus_input = minus_input
@@ -67,12 +67,12 @@ class LJTemp():
         """ Return temperature measured by the probe in celsius"""
         if not self.connected:
             raise Exception('Not connected to labjack')
-        volts = self.voltage(probe)
+        volts = self._voltage(probe)
         if (probe.kind == 'RTD'):
             resistance = self._resistance_for(volts, self._calibrated_current())
             return self._rtd_temperature(resistance, probe.model)
         else:
-            raise Exception('Probe type {0} not supported.'.format(probe.type))
+            raise Exception('Probe kind {0} not supported.'.format(probe.kind))
 
     def _calibrated_current(self):
         """ Return factory calibration data for the U6 200uA current source in volts"""
@@ -135,17 +135,17 @@ class LJTemp():
                         self.__rtd_table[probe_model].append(datapoint)
         return self.__rtd_table[probe_model]
 
-    def _rtd_temperature(self, ohms, probe_type):
+    def _rtd_temperature(self, ohms, probe_model):
         """ Return the temperature in Celsius for a RTD sensor given its resistance
 
         Uses linear interpolation from table at http://en.wikipedia.org/wiki/Resistance_thermometer
 
         Arguments:
         - `ohms` (float): measured resistance in ohms
-        - `probe_type`: sensor type, one of 'pt100', 'pt1000', 'ptc', 'ntc-101', ..., 'ntc-105'
+        - `probe_model`: one of 'pt100', 'pt1000', 'ptc', 'ntc-101', ..., 'ntc-105'
         """
         # open table with resistance / temp mappings
-        probe_models = {'pt100': '404',
+        model_codes = {'pt100': '404',
                         'pt1000': '501',
                         'ptc': '201',
                         'ntc-101': '101',
@@ -153,11 +153,11 @@ class LJTemp():
                         'ntc-103': '103',
                         'ntc-104': '104',
                         'ntc-105': '105'}
-        if probe_type not in probe_models:
-            raise Exception('unsupported probe type')
-        model = probe_models[probe_type]
+        if probe_model not in model_codes:
+            raise Exception('unsupported probe model: {0}'.format(probe_model))
+        model_code = model_codes[probe_model]
 
-        data = self._rtd_table(model)
+        data = self._rtd_table(model_code)
 
         # find closest match in table of resistances
         ohms = float(ohms)

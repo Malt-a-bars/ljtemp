@@ -1,7 +1,7 @@
 import unittest
 
 # set to False to disable tests requiring a connected labjack device
-connected = False
+connected_mode = True
 
 
 class TestLabjack(unittest.TestCase):
@@ -9,21 +9,23 @@ class TestLabjack(unittest.TestCase):
     def setUp(self):
         import ljtemp
         self.ljt = ljtemp.LJTemp()
-        probe = ljtemp.Probe(name='R0', kind='RTD', model='PT1000', plus_input='AIN0',
+	if connected_mode: 
+	    self.ljt.connect()
+        probe = ljtemp.Probe(name='R0', kind='RTD', model='pt1000', plus_input='AIN0',
                              minus_input='GND')
         self.ljt.add_probe(probe)
 
     def tearDown(self):
         self.ljt.disconnect()
 
-    @unittest.skipIf(not connected, "in disconnected mode.")
+    @unittest.skipIf(not connected_mode, "in disconnected mode.")
     def test_calibrated_current(self):
         # read factory calibrated current from the labjack
         current = self.ljt._calibrated_current()
         self.assertAlmostEqual(current, 0.000200, delta=0.000010,
                                msg='Calibrated current not close to 200uA')
 
-    @unittest.skipIf(not connected, "in disconnected mode.")
+    @unittest.skipIf(not connected_mode, "in disconnected mode.")
     def test_voltage_range(self):
         # make sure we can read voltages and in range [0 - 0.35] volt
         # for 3 resistors
@@ -35,7 +37,7 @@ class TestLabjack(unittest.TestCase):
                             msg='Voltage of probe {0} is {1}, should be in range [0.016-0.350] volt'
                 .format(probe.name, volt))
 
-    @unittest.skipIf(not connected, "in disconnected mode.")
+    @unittest.skipIf(not connected_mode, "in disconnected mode.")
     def test_null_voltage(self):
         # make sure we get 0V between two similar entries
         for connector in ['AIN0', 'AIN1', 'AIN2', 'AIN3']:
@@ -45,7 +47,7 @@ class TestLabjack(unittest.TestCase):
             volt = self.ljt._voltage(probe)
             self.assertEqual(volt, 0, 'Voltage on single input should be zero')
 
-    @unittest.skipIf(not connected, "in disconnected mode.")
+    @unittest.skipIf(not connected_mode, "in disconnected mode.")
     def test_temp_range(self):
         # temp in range [-50 - 200] celcius
         for probe in self.ljt.probes:
