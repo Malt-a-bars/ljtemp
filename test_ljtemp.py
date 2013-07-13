@@ -1,7 +1,8 @@
 import unittest
+from probes import TemperatureProbe
 
 # set to False to disable tests requiring a connected labjack device
-connected_mode = True
+connected_mode = False
 
 
 class TestLabjack(unittest.TestCase):
@@ -9,10 +10,10 @@ class TestLabjack(unittest.TestCase):
     def setUp(self):
         import ljtemp
         self.ljt = ljtemp.LJTemp()
-	if connected_mode: 
-	    self.ljt.connect()
-        probe = ljtemp.Probe(name='R0', kind='RTD', model='pt1000', plus_input='AIN0',
-                             minus_input='GND')
+        if connected_mode:
+            self.ljt.connect()
+        probe = TemperatureProbe(name='R0', kind='RTD', model='pt1000',
+                                 plus_input='AIN0', minus_input='GND')
         self.ljt.add_probe(probe)
 
     def tearDown(self):

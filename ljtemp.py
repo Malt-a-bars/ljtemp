@@ -10,30 +10,6 @@ import re
 MAX_NUM_PROBES = 3
 
 
-class Probe():
-    """ Class for temperature sensors settings. """
-    def __init__(self, name='',
-                 kind='RTD',
-                 model='PT1000',
-                 plus_input='AIN0',
-                 minus_input='GND'
-                 ):
-        """ Configure a new probe
-
-        Arguments:
-        - `name` (str): user defined name for the probe
-        - `kind` (str): 'RTD' is the only kind supported
-        - `model` (str): 'PT100' or 'PT1000'
-        - `plus_input` (str): labjack input to measure voltage from
-        - `minus_input` (str): labjack input to substract voltage from. Can be 'GND'
-        """
-        self.name = name
-        self.kind = kind
-        self.model = model
-        self.plus_input = plus_input
-        self.minus_input = minus_input
-
-
 class LJTemp():
 
     def __init__(self):
@@ -59,7 +35,7 @@ class LJTemp():
 
         Arguments:
 
-        - `probe`: a Probe object
+        - `probe`: a TemperatureProbe object
         """
         self.probes.append(probe)
 
@@ -72,7 +48,7 @@ class LJTemp():
             resistance = self._resistance_for(volts, self._calibrated_current())
             return self._rtd_temperature(resistance, probe.model)
         else:
-            raise Exception('Probe kind {0} not supported.'.format(probe.kind))
+            raise Exception('TemperatureProbe kind {0} not supported.'.format(probe.kind))
 
     def _calibrated_current(self):
         """ Return factory calibration data for the U6 200uA current source in volts"""
@@ -85,7 +61,7 @@ class LJTemp():
 
         Arguments:
 
-        - `probe` (Probe): a configured probe object
+        - `probe` (TemperatureProbe): a configured probe object
         """
         if not self.connected:
             raise Exception('Not connected to labjack')
