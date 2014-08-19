@@ -99,7 +99,7 @@ class LJTemp():
 
         if probe_model not in self.__rtd_table:
             # load table from csv file, which must be sorted by resistance!
-            with open('maltabar.csv', 'rU') as csvfile:
+            with open('probes_tempres.csv', 'rU') as csvfile:
                 reader = csv.DictReader(csvfile)
                 self.__rtd_table[probe_model] = []
                 for row in reader:
