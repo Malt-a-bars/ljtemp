@@ -10,7 +10,8 @@ Use as you please, no warrany of any kind.
 Module documentation:
 --------------------
 
-<http://htmlpreview.github.io/?https://github.com/Malt-a-bars/ljtemp/blob/master/src/ljtemp.html>
+[http://htmlpreview.github.io/?https://github.com/Malt-a-bars/ljtemp/blob/master/src/ljtemp.html](ljtemp class)
+[http://htmlpreview.github.io/?https://github.com/Malt-a-bars/ljtemp/blob/master/src/probes.html](probes class)
 
 
 References:
