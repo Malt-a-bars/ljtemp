@@ -7,6 +7,11 @@ This module provides easy measurement of temperatures using RTD probes of type P
 
 Use as you please, no warrany of any kind.
 
+Module documentation:
+--------------------
+
+<http://htmlpreview.github.io/?https://github.com/Malt-a-bars/ljtemp/blob/master/src/ljtemp.html>
+
 
 References:
 -----------
