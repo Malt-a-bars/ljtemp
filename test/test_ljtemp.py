@@ -2,7 +2,7 @@ import unittest
 from probes import TemperatureProbe
 
 # set to False to disable tests requiring a connected labjack device
-connected_mode = False
+connected_mode = True
 
 
 class TestLabjack(unittest.TestCase):
@@ -42,8 +42,7 @@ class TestLabjack(unittest.TestCase):
     def test_null_voltage(self):
         # make sure we get 0V between two similar entries
         for connector in ['AIN0', 'AIN1', 'AIN2', 'AIN3']:
-            from ljtemp import Probe
-            probe = Probe(name='test'+connector, kind='RTD', model='PT1000', plus_input=connector,
+            probe = TemperatureProbe(name='test'+connector, kind='RTD', model='PT1000', plus_input=connector,
                           minus_input=connector)
             volt = self.ljt._voltage(probe)
             self.assertEqual(volt, 0, 'Voltage on single input should be zero')
