@@ -27,7 +27,7 @@ CLASSIFIERS = [
     ]
 
 setup(name='ljtemp',
-      version='2014-08-21',
+      version='2014-09-2',
       description='The LabJack temperature reading module.',
       license='MIT X11',
       url='https://github.com/Malt-a-bars/ljtemp',
@@ -37,5 +37,6 @@ setup(name='ljtemp',
       maintainer_email='',
       classifiers=CLASSIFIERS,
       package_dir = {'ljtemp': 'src'},
-      packages=['ljtemp']
+      package_data={'ljtemp': ['*.csv']},
+      packages=['ljtemp'],
       )

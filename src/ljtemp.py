@@ -4,6 +4,7 @@
 import u6
 import csv
 import re
+import os
 
 # TODO: only one sensor supported for now. When adding more, just modify voltage to return
 # the right differential voltages
@@ -99,7 +100,9 @@ class LJTemp():
 
         if probe_model not in self.__rtd_table:
             # load table from csv file, which must be sorted by resistance!
-            with open('probes_tempres.csv', 'rU') as csvfile:
+            this_dir, this_filename = os.path.split(__file__)
+            data_file = os.path.join(this_dir, 'probes_tempres.csv')
+            with open(data_file, 'rU') as csvfile:
                 reader = csv.DictReader(csvfile)
                 self.__rtd_table[probe_model] = []
                 for row in reader:
